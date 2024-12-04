@@ -17,19 +17,56 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # Step 2: Install dependencies (Visual Studio 2019)
+    # Step 2: Install dependencies (Visual Studio and MSBuild environment)
     - name: Setup MSBuild environment
       uses: microsoft/setup-msbuild@v1
 
-    # Step 3: Build the project using MSBuild
-    - name: Build ViGEmClient.dll
+    # Step 3: Build x64 Release version
+    - name: Build ViGEmClient.dll (x64 Release)
       run: |
         msbuild.exe ViGEmClient.sln /p:Configuration=Release_DLL /p:Platform=x64
+      env:
+        Configuration: Release_DLL
+        Platform: x64
 
-    # Step 4: Upload the built DLL as an artifact
-    - name: Upload DLL artifact
+    # Step 4: Build x86 Release version
+    - name: Build ViGEmClient.dll (x86 Release)
+      run: |
+        msbuild.exe ViGEmClient.sln /p:Configuration=Release_DLL /p:Platform=x86
+      env:
+        Configuration: Release_DLL
+        Platform: x86
+
+    # Step 5: Build x64 Debug version
+    - name: Build ViGEmClient.dll (x64 Debug)
+      run: |
+        msbuild.exe ViGEmClient.sln /p:Configuration=Debug_DLL /p:Platform=x64
+      env:
+        Configuration: Debug_DLL
+        Platform: x64
+
+    # Step 6: Build x86 Debug version
+    - name: Build ViGEmClient.dll (x86 Debug)
+      run: |
+        msbuild.exe ViGEmClient.sln /p:Configuration=Debug_DLL /p:Platform=x86
+      env:
+        Configuration: Debug_DLL
+        Platform: x86
+
+    # Step 7: Upload Release DLLs as artifacts
+    - name: Upload Release DLLs
       uses: actions/upload-artifact@v3
       with:
-        name: ViGEmClient-DLL
+        name: ViGEmClient-Release-DLLs
         path: |
           bin/Release/x64/ViGEmClient.dll
+          bin/Release/x86/ViGEmClient.dll
+
+    # Step 8: Upload Debug DLLs as artifacts
+    - name: Upload Debug DLLs
+      uses: actions/upload-artifact@v3
+      with:
+        name: ViGEmClient-Debug-DLLs
+        path: |
+          bin/Debug/x64/ViGEmClient.dll
+          bin/Debug/x86/ViGEmClient.dll
